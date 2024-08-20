@@ -1,0 +1,233 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema spacestation
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema spacestation
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `spacestation` DEFAULT CHARACTER SET utf8 ;
+USE `spacestation` ;
+
+-- -----------------------------------------------------
+-- Table `spacestation`.`especialidade`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `spacestation`.`especialidade` (
+  `idEspecialidade` INT(11) NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idEspecialidade`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 16
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `spacestation`.`astronauta`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `spacestation`.`astronauta` (
+  `idAstronauta` INT(11) NOT NULL AUTO_INCREMENT,
+  `nomeAstro` VARCHAR(45) NOT NULL,
+  `pais` VARCHAR(45) NOT NULL,
+  `Especialidade_idEspecialidade` INT(11) NOT NULL,
+  PRIMARY KEY (`idAstronauta`, `Especialidade_idEspecialidade`),
+  INDEX `fk_Astronauta_Especialidade1_idx` (`Especialidade_idEspecialidade` ASC) ,
+  CONSTRAINT `fk_Astronauta_Especialidade1`
+    FOREIGN KEY (`Especialidade_idEspecialidade`)
+    REFERENCES `spacestation`.`especialidade` (`idEspecialidade`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `spacestation`.`combustivel`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `spacestation`.`combustivel` (
+  `idCombustivel` INT(11) NOT NULL AUTO_INCREMENT,
+  `marca` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idCombustivel`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 11
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `spacestation`.`empresaparceria`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `spacestation`.`empresaparceria` (
+  `idEmpresaParceria` INT(11) NOT NULL AUTO_INCREMENT,
+  `nomeEmpresa` VARCHAR(45) NOT NULL,
+  `pais` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idEmpresaParceria`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `spacestation`.`oxigenio`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `spacestation`.`oxigenio` (
+  `idOxigenio` INT(11) NOT NULL AUTO_INCREMENT,
+  `quantidadeAbastecida` FLOAT NOT NULL,
+  `estado` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idOxigenio`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 11
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `spacestation`.`estacao`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `spacestation`.`estacao` (
+  `idEstacao` INT(11) NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(45) NOT NULL,
+  `temperatura` FLOAT NOT NULL,
+  `Oxigenio_idOxigenio` INT(11) NOT NULL,
+  PRIMARY KEY (`idEstacao`, `Oxigenio_idOxigenio`),
+  INDEX `fk_Estacao_Oxigenio1_idx` (`Oxigenio_idOxigenio` ASC) ,
+  CONSTRAINT `fk_Estacao_Oxigenio1`
+    FOREIGN KEY (`Oxigenio_idOxigenio`)
+    REFERENCES `spacestation`.`oxigenio` (`idOxigenio`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `spacestation`.`foguete`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `spacestation`.`foguete` (
+  `idFoguete` INT(11) NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(45) NOT NULL,
+  `Combustivel_idCombustivel` INT(11) NOT NULL,
+  `localLancamento` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idFoguete`, `Combustivel_idCombustivel`),
+  INDEX `fk_Foguete_Combustivel1_idx` (`Combustivel_idCombustivel` ASC) ,
+  CONSTRAINT `fk_Foguete_Combustivel1`
+    FOREIGN KEY (`Combustivel_idCombustivel`)
+    REFERENCES `spacestation`.`combustivel` (`idCombustivel`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `spacestation`.`login`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `spacestation`.`login` (
+  `idLogin` INT(11) NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(45) NOT NULL,
+  `senha` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idLogin`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 2
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `spacestation`.`relatorio`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `spacestation`.`relatorio` (
+  `idRelatorio` INT(11) NOT NULL AUTO_INCREMENT,
+  `descricao` TEXT NOT NULL,
+  PRIMARY KEY (`idRelatorio`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `spacestation`.`missao`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `spacestation`.`missao` (
+  `idMissao` INT(11) NOT NULL AUTO_INCREMENT,
+  `nomeMissao` VARCHAR(45) NOT NULL,
+  `duracaoDias` INT(11) NOT NULL,
+  `motivo` TEXT NOT NULL,
+  `Astronauta_idAstronauta` INT(11) NOT NULL,
+  `Foguete_idFoguete` INT(11) NOT NULL,
+  `Relatorio_idRelatorio` INT(11) NOT NULL,
+  `EmpresaParceria_idEmpresaParceria` INT(11) NOT NULL,
+  `estacao_idEstacao` INT(11) NOT NULL,
+  PRIMARY KEY (`idMissao`, `Astronauta_idAstronauta`, `Foguete_idFoguete`, `Relatorio_idRelatorio`, `EmpresaParceria_idEmpresaParceria`, `estacao_idEstacao`),
+  INDEX `fk_Missao_Astronauta1_idx` (`Astronauta_idAstronauta` ASC) ,
+  INDEX `fk_Missao_Foguete1_idx` (`Foguete_idFoguete` ASC) ,
+  INDEX `fk_Missao_Relatorio1_idx` (`Relatorio_idRelatorio` ASC) ,
+  INDEX `fk_Missao_EmpresaParceria1_idx` (`EmpresaParceria_idEmpresaParceria` ASC) ,
+  INDEX `fk_missao_estacao1_idx` (`estacao_idEstacao` ASC) ,
+  CONSTRAINT `fk_Missao_Astronauta1`
+    FOREIGN KEY (`Astronauta_idAstronauta`)
+    REFERENCES `spacestation`.`astronauta` (`idAstronauta`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Missao_EmpresaParceria1`
+    FOREIGN KEY (`EmpresaParceria_idEmpresaParceria`)
+    REFERENCES `spacestation`.`empresaparceria` (`idEmpresaParceria`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Missao_Foguete1`
+    FOREIGN KEY (`Foguete_idFoguete`)
+    REFERENCES `spacestation`.`foguete` (`idFoguete`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Missao_Relatorio1`
+    FOREIGN KEY (`Relatorio_idRelatorio`)
+    REFERENCES `spacestation`.`relatorio` (`idRelatorio`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_missao_estacao1`
+    FOREIGN KEY (`estacao_idEstacao`)
+    REFERENCES `spacestation`.`estacao` (`idEstacao`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+
+
+
+INSERT INTO `SpaceStation`.`Especialidade` (`nome`) VALUES ('Engenheiro de Propulsão');
+INSERT INTO `SpaceStation`.`Especialidade` (`nome`) VALUES ('Médico Espacial');
+INSERT INTO `SpaceStation`.`Especialidade` (`nome`) VALUES ('Cientista de Astrobiologia');
+INSERT INTO `SpaceStation`.`Especialidade` (`nome`) VALUES ('Especialista em Navegação Espacial');
+INSERT INTO `SpaceStation`.`Especialidade` (`nome`) VALUES ('Técnico de Sistemas de Suporte à Vida');
+
+INSERT INTO `SpaceStation`.`Combustivel` (`marca`) VALUES ('fueltech');
+INSERT INTO `SpaceStation`.`Combustivel` (`marca`) VALUES ('petrobras');
+INSERT INTO `SpaceStation`.`Combustivel` (`marca`) VALUES ('shell');
+
+INSERT INTO `SpaceStation`.`Oxigenio` (`quantidadeAbastecida`,`estado`) VALUES (50,"Nominal");
+INSERT INTO `SpaceStation`.`Oxigenio` (`quantidadeAbastecida`,`estado`) VALUES (100,"Nominal");
+INSERT INTO `SpaceStation`.`Oxigenio` (`quantidadeAbastecida`,`estado`) VALUES (150,"Nominal");
+INSERT INTO `SpaceStation`.`Oxigenio` (`quantidadeAbastecida`,`estado`) VALUES (200,"Nominal");
+INSERT INTO `SpaceStation`.`Oxigenio` (`quantidadeAbastecida`,`estado`) VALUES (250,"Nominal");
+
+INSERT INTO `SpaceStation`.`empresaparceria` (`nomeEmpresa`,`pais`) VALUES ("NASA","EUA");
+INSERT INTO `SpaceStation`.`empresaparceria` (`nomeEmpresa`,`pais`) VALUES ("SpaceX","EUA");
+INSERT INTO `SpaceStation`.`empresaparceria` (`nomeEmpresa`,`pais`) VALUES ("Boeing","Brasil");
+INSERT INTO `SpaceStation`.`empresaparceria` (`nomeEmpresa`,`pais`) VALUES ("Blue Origin","Canadá");
+
+
+select * from estacao;
+select * from foguete;
+select * from astronauta;
+select * from relatorio;
+select * from missao;
+
+
